@@ -1,0 +1,42 @@
+{
+  "items": [
+    {
+      "type": "inputFormularItem",
+      "label": "test 1",
+      "properties": {
+        "type": "text",
+        "required": "true",
+        "placeholder": "Placeholder text"
+      }
+    },{
+      "type": "inputFormularItem",
+      "label": "test 2",
+      "properties": {
+        "type": "button",
+        "value": "test"
+      }
+    },{
+      "type": "selectFormularItem",
+      "label": "test 3",
+      "properties": {
+        "value": "test",
+        "options": [
+          {"text":1},
+          {"text":2,"value":"test"},
+          {"text":3}
+        ]
+      }
+    },{
+      "type": "radioFormularItem",
+      "label": "test 3",
+      "properties": {
+        "value": "test",
+        "radios": [
+          {"text":"Option 1"},
+          {"text":"Option 2","value":"test"},
+          {"text":"Option 3"}
+        ]
+      }
+    }
+  ]
+}
