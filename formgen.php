@@ -34,8 +34,6 @@ $result = $form->toHtml();
     <meta charset="utf-8" />
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap-theme.min.css">
-    <script src="//code.jquery.com/jquery-1.11.2.min.js"></script>
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/js/bootstrap.min.js"></script>
     <style>
 body {
   margin: 20px;
@@ -48,6 +46,27 @@ body > div {
   vertical-align: top;
 }
     </style>
+    <script>
+      onload = function(){
+        document.getElementById("link").href
+         = URL.createObjectURL(
+             new Blob([
+               "<!DOCTYPE html><html><head>\n",
+               "<title>Titel</title>\n",
+               "<meta charset=\"utf-8\">\n",
+               "<link rel=\"stylesheet\" href=\"https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap.min.css\">\n",
+               "<link rel=\"stylesheet\" href=\"https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap-theme.min.css\">\n",
+               "</head><body>\n",
+                 document.getElementById("content").textContent
+              || document.getElementById("content").innerText,
+               "</body></html>\n"
+             ],{
+               type: "text/html"
+             })
+           )
+        ;
+      };
+    </script>
   </head>
   <body>
     <div>
@@ -56,7 +75,8 @@ body > div {
     </div>
     <div>
       <h1>Code</h1>
-      <pre><?php echo htmlentities($result); ?></pre>
+      <pre id="content"><?php echo htmlentities($result); ?></pre>
+      <a id="link" download="formular.html">Download</a>
     </div>
   </body>
 </html>
