@@ -1,43 +1,57 @@
 <?php
 
+// Interface für formularelement
 interface FormularItem {
-  public function set($key,$value);
-  public function setLabel($name);
-  public function toHTML($id);
+  public function set($key,$value); // Wert des Formularelements setzen
+  public function setLabel($name); // Label des Formularelements setzen
+  public function toHTML($id); //
 }
 
 class Formular {
-  private $items = array();
-  private static $itemTypes = array();
+  private $items = array(); // Liste aller Formularelemente
+  private static $itemTypes = array(); // Liste aller Formularelementtypen
+  // Neue instanz eines Formularelements vom typ $name erstellen 
   public function createItem( $name ){
     if(!in_array( $name, self::$itemTypes ))
-      return null;
-    return new $name();
+      return null; // Ungültiger formulartyp, null zurückgeben
+    return new $name(); // Formularelement instanzieren
   }
+  // Formularelement zu formular hinzufügen
   public function addItem(FormularItem $item){
     $this->items[] = $item;
   }
+  // Formularelementtyp hinzufügen
   public static function addItemType($item){
     self::$itemTypes[] = $item;
   }
+  // HTML-Code aus formular generieren 
   public function toHTML(){
     $id = 0;
+    // String repräsentation eines öffnenden form tag in variable $html speichern
     $html = "<form>\n";
-    foreach($this->items as $item){
-      $html .= $item->toHtml($id++) . "\n";
+    foreach($this->items as $item){ // Für jedes Formularelement
+      // Generiere html code aus Formularelement als string, füge diesen zu $html hinzu
+      // Die Formularelemente müssen für die label eindeutig identifizierbar sein, edshalb
+      // werden sie durchnumeriert
+      $html .= $item->toHtml($id++) . "\n"; 
     }
+    // String repräsentation eines schliessenden form tag zum inhalt der Variable $html hinzufügen
     $html .= "\n</form>\n";
-    return $html;
+    return $html; // HTML-Code als string zurückgeben
   }
 }
 
+// Zusammensetzen der stringrepräsentation eines HTML-Attributs, 
+// inclusive escapen Problematischer zeichen in dessen wert
 function htmlAttr($name,$val){
   if($val===null)
     return '';
   return $name.'="'.htmlentities($val).'" ';
 }
 
+// Ein Eingabeformularelement
 class inputFormularItem implements FormularItem {
+  /* Eigenschaften des Eingabeelements */
   private $type = null;
   private $name = null;
   private $value = null;
@@ -45,9 +59,11 @@ class inputFormularItem implements FormularItem {
   private $maxlength = null;
   private $placeholder = null;
   private $label = null;
-  public function setLabel($name){
+  /****/
+  public function setLabel($name){ // setter für label
     $this->label = $name;
   }
+  // Setter für restliche eigenschaften
   public function set($key,$value){
     switch($key){
       case "type": 		$this->type		= $value; break;
@@ -58,8 +74,9 @@ class inputFormularItem implements FormularItem {
       case "placeholder":	$this->placeholder	= $value; break;
     }
   }
+  // HTML-Code aus Formularelement generieren
   public function toHTML($id){
-    if($this->type=='checkbox')
+    if($this->type=='checkbox') // Sonderbehandlung für checkboxen
       return "
   <div class=\"form-group\">
     <label><input type=\"checkbox\" "
@@ -83,6 +100,7 @@ class inputFormularItem implements FormularItem {
   }
 }
 
+// Eingabeformularelementtyp als String zur Formularelementtypenliste des Formular types hinzufügen
 Formular::addItemType("inputFormularItem");
 
 class textareaFormularItem implements FormularItem {
@@ -146,7 +164,7 @@ class selectFormularItem implements FormularItem {
     . htmlAttr("name",		$this->name	)
     . htmlAttr("required",	$this->required	)
     . ">\n";
-    foreach($this->options as $option){
+    foreach($this->options as $option){ // HTML-Code für Auswahloptionen generieren
       $result .= "      <option "
       . htmlAttr("value", @$option['value'] )
       . htmlAttr("disabled", @$option['disabled']?'disabled':null )
@@ -182,7 +200,7 @@ class radioFormularItem implements FormularItem {
   <div class=\"form-group\">
     <label>" . htmlentities($this->label) . "</label><br/>\n";
     $i=0;
-    foreach($this->radios as $radio){
+    foreach($this->radios as $radio){ // Alle radio-input elemente generieren
       $result .= "    <label>
       <input type=\"radio\" id=\"i".$id."_".$i."\" "
       . htmlAttr("name", isset($this->name)?$this->name:'i'.$id )
