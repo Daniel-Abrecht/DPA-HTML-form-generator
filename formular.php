@@ -42,6 +42,7 @@ class inputFormularItem implements FormularItem {
   private $name = null;
   private $value = null;
   private $required = null;
+  private $maxlength = null;
   private $placeholder = null;
   private $label = null;
   public function setLabel($name){
@@ -53,6 +54,7 @@ class inputFormularItem implements FormularItem {
       case "name":		$this->name		= $value; break;
       case "value":		$this->value		= $value; break;
       case "required":		$this->required		= $value; break;
+      case "maxlength":		$this->maxlength	= $value; break;
       case "placeholder":	$this->placeholder	= $value; break;
     }
   }
@@ -74,6 +76,7 @@ class inputFormularItem implements FormularItem {
     . htmlAttr("name",		$this->name		)
     . htmlAttr("value",		$this->value		)
     . htmlAttr("required",	$this->required		)
+    . htmlAttr("maxlength",	$this->maxlength	)
     . htmlAttr("placeholder",	$this->placeholder	)
     . "/>
   </div>";
@@ -86,6 +89,7 @@ class textareaFormularItem implements FormularItem {
   private $name = null;
   private $value = null;
   private $required = null;
+  private $maxlength = null;
   private $placeholder = null;
   private $label = null;
   public function setLabel($name){
@@ -96,6 +100,7 @@ class textareaFormularItem implements FormularItem {
       case "name":		$this->name		= $value; break;
       case "value":		$this->value		= $value; break;
       case "required":		$this->required		= $value; break;
+      case "maxlength":		$this->maxlength	= $value; break;
       case "placeholder":	$this->placeholder	= $value; break;
     }
   }
@@ -106,6 +111,7 @@ class textareaFormularItem implements FormularItem {
     <textarea id=\"i$id\" class=\"form-control\" "
     . htmlAttr("name",		$this->name		)
     . htmlAttr("required",	$this->required		)
+    . htmlAttr("maxlength",	$this->maxlength	)
     . htmlAttr("placeholder",	$this->placeholder	)
     . ">"
     . htmlentities($this->value)

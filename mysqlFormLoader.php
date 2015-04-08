@@ -235,6 +235,8 @@ class MysqlFormLoader implements FormLoader {
           }else{
             $item->set("type",isset($inputType[$fieldtype])?$inputType[$fieldtype]:"text");
           }
+          if((int)$typeDetails)
+            $item->set("maxlength", (int)$typeDetails);
           $item->set("name", $name);
           if( $properties && isset( $properties['placeholder'] ) )
             $item->set("placeholder",$properties['placeholder']);
@@ -271,6 +273,8 @@ class MysqlFormLoader implements FormLoader {
           $item->set("name", $name);
           if( $properties && isset( $properties['placeholder'] ) )
             $item->set("placeholder",$properties['placeholder']);
+          if((int)$typeDetails)
+            $item->set("maxlength", (int)$typeDetails);
           $item->setLabel( $label );
           $form->addItem( $item );
         } break;
