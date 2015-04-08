@@ -65,6 +65,7 @@ class MysqlFormLoader implements FormLoader {
   WHERE
         c.TABLE_SCHEMA = ?
     AND c.TABLE_NAME = ?
+  ORDER BY c.ORDINAL_POSITION ASC
 ";
     if(! $statement = $this->db->prepare($query) ){
       trigger_error( "mysqli::prepare failed!" . $this->db->error );
