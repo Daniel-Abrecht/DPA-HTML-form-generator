@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Form Generator</title>
+    <style>
+      h4 { margin-bottom: 5px; }
+    </style>
+  </head>
+  <body>
+    <h1>Form aus Datenbanktabelle</h1>
+    <form method="post" action="formgen.php">
+      <input type="hidden" name="loader" value="mysql" />
+      <h4>Host: </h4><input type="text" name="host" value="127.0.0.1" />
+      <h4>User: </h4><input type="text" name="user" value="dbuser" />
+      <h4>Password: </h4><input type="text" name="password" value="secret" />
+      <h4>Database: </h4><input type="text" name="dbname" value="fg_testdb" />
+      <h4>Name: </h4><input type="text" name="name" value="car" />
+      <br/><br/>
+      <input type="submit" />
+    </form>
+    <h1>Form aus JSON</h1>
+    <form method="post" action="formgen.php" enctype="multipart/form-data">
+      <input type="hidden" name="loader" value="json" />
+      <input type="file" name="file"/>
+      <br/><br/>
+      <input type="submit" />
+    </form>
+  </body>
+</html>

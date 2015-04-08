@@ -15,19 +15,38 @@ CREATE TABLE car (
     "placeholder": "Bitte geben Sie eine Beschreibung ein",
     "label": "Beschreibung"
   }',
-  color INT NOT NULL COMMENT '{
-    "label": "Farbe",
+  colorInside INT NOT NULL COMMENT '{
+    "label": "Farbe innen",
     "format": "#{code}: {name}",
     "placeholder": "Bitte wählen Sie eine Farbe aus"
   }',
+  colorOutside INT NOT NULL DEFAULT 2 COMMENT '{
+    "label": "Farbe aussen",
+    "format": "#{code}: {name}",
+    "placeholder": "Bitte wählen Sie eine Farbe aus",
+    "type": "radio"
+  }',
+  wheelColor VARCHAR(7) NOT NULL DEFAULT '#000000' COMMENT '{
+    "label": "Farbe der Räder",
+    "type": "color"
+  }',
   getriebe SET('5-Gang','6-Gang') NOT NULL DEFAULT '5-Gang',
+  tankGroese SET('10-liter','20-liter') NOT NULL COMMENT '{
+    "label": "Tank grösse",
+    "type":"select"
+  }',
   preis FLOAT NOT NULL DEFAULT 250,
   datum DATE NOT NULL DEFAULT '2015-10-09',
-  unikat bit(1),
+  sonstiges VARCHAR(256) COMMENT '{
+    "type": "textarea",
+    "placeholder": "Geben sie hier weitere Anmerkungen zum Auto ein"
+  }',
+  unikat bit(1) DEFAULT 1,
   licenceAccepted bit(1) NOT NULL COMMENT '{
     "label": "Ich erkläre mich mit den AGB einverstanden"
   }',
-  FOREIGN KEY(color) REFERENCES color(id),
+  FOREIGN KEY(colorInside) REFERENCES color(id),
+  FOREIGN KEY(colorOutside) REFERENCES color(id),
   PRIMARY KEY(id)
 );
 
@@ -35,27 +54,4 @@ INSERT INTO color (name,code) VALUES ('red','FF0000');
 INSERT INTO color (name,code) VALUES ('green','00FF00');
 INSERT INTO color (name,code) VALUES ('blue','0000FF');
 
-
-/*
-  SELECT
-    c.COLUMN_TYPE AS type,
-    c.COLUMN_NAME AS name,
-    c.IS_NULLABLE AS nullable,
-    c.COLUMN_DEFAULT AS `default`,
-    r.REFERENCED_TABLE_NAME AS reftbl,
-    r.REFERENCED_COLUMN_NAME AS refcol,
-    c.COLUMN_COMMENT AS comment
-  FROM
-    INFORMATION_SCHEMA.COLUMNS AS c
-  LEFT JOIN
-    INFORMATION_SCHEMA.KEY_COLUMN_USAGE AS r
-  ON
-        c.TABLE_NAME = r.TABLE_NAME
-    AND c.TABLE_SCHEMA = r.TABLE_SCHEMA
-    AND c.COLUMN_NAME = r.COLUMN_NAME
-  WHERE
-        c.TABLE_SCHEMA = 'fg_testdb'
-    AND c.TABLE_NAME = 'car'
-  ;
-*/
 

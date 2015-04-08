@@ -82,6 +82,40 @@ class inputFormularItem implements FormularItem {
 
 Formular::addItemType("inputFormularItem");
 
+class textareaFormularItem implements FormularItem {
+  private $name = null;
+  private $value = null;
+  private $required = null;
+  private $placeholder = null;
+  private $label = null;
+  public function setLabel($name){
+    $this->label = $name;
+  }
+  public function set($key,$value){
+    switch($key){
+      case "name":		$this->name		= $value; break;
+      case "value":		$this->value		= $value; break;
+      case "required":		$this->required		= $value; break;
+      case "placeholder":	$this->placeholder	= $value; break;
+    }
+  }
+  public function toHTML($id){
+    return "
+  <div class=\"form-group\">
+    <label for=\"i$id\">" . htmlentities($this->label) . "</label>
+    <textarea id=\"i$id\" class=\"form-control\" "
+    . htmlAttr("name",		$this->name		)
+    . htmlAttr("required",	$this->required		)
+    . htmlAttr("placeholder",	$this->placeholder	)
+    . ">"
+    . htmlentities($this->value)
+    . "</textarea>
+  </div>";
+  }
+}
+
+Formular::addItemType("textareaFormularItem");
+
 class selectFormularItem implements FormularItem {
   private $name = null;
   private $value = null;

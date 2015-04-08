@@ -8,7 +8,7 @@ class JsonFormLoader implements FormLoader {
   private $root;
   private $prefix;
 
-  public function JsonFormLoader($root,$prefix){
+  public function JsonFormLoader($root='',$prefix=''){
     $this->root = $root;
     $this->prefix = $prefix;
   }

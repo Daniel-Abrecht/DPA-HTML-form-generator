@@ -13,8 +13,9 @@ class MysqlFormLoader implements FormLoader {
     $this->dbname = $dbname;
     $this->db = @new mysqli($host,$user,$password,$dbname);
     if($this->db->connect_errno){
-      trigger_error( "Failed to connect to MySQL: " . $this->db->connect_error, E_USER_ERROR );
+      $err = "Failed to connect to MySQL: " . $this->db->connect_error;
       $this->db = null;
+      trigger_error( $err, E_USER_ERROR );
     }
     $this->db->set_charset("utf8");
   }
@@ -114,6 +115,10 @@ class MysqlFormLoader implements FormLoader {
 
       $properties = @JSON_decode($column['comment'],true);
 
+      if( isset($properties['type']) && $properties['type'] == 'textarea' ){
+        $type="textareaFormularItem";
+      }
+
       if( $properties && @$properties['hidden'] )
         continue;
 
@@ -129,14 +134,25 @@ class MysqlFormLoader implements FormLoader {
        && preg_match_all( '/{([^}]*)}/', $properties['format'], $vars )
       ){
         $type = "selectFormularItem";
+        if(isset($properties['type'])&&$properties['type']=='radio'){
+          $type = "radioFormularItem";
+          if($column['nullable']){
+            $values[] = array(
+              'text' => "Keine Auswahl",
+              'value' => ""
+            );
+            if(!$value)$value='';
+          }
+        }else{
+          $values[] = array(
+            'text' => isset($properties['placeholder']) 
+                        ? $properties['placeholder']
+                        : "$label auswählen...",
+            'value' => '',
+            'disabled' => !$column['nullable']
+          );
+        }
         $rows = $this->getDatas($column['reftbl'],array_merge(array($column['refcol']),$vars[1]));
-        $values[] = array(
-          'text' => isset($properties['placeholder']) 
-                      ? $properties['placeholder']
-                      : "$label auswählen...",
-          'value' => '',
-          'disabled' => !$column['nullable']
-        );
         foreach($rows as $row){
           $replacement = array();
           foreach($vars[1] as $key)
@@ -169,18 +185,30 @@ class MysqlFormLoader implements FormLoader {
         $type = "radioFormularItem";
         $result = strtr($typeDetails,'"\'','\'"'); // replace ' with " and " with '
         $v = JSON_decode('['.$result.']'); // get items of set as array, json decode handels all escaping properly
-        if($column['nullable']){
+        if(isset($properties['type'])&&$properties['type']=='select'){
+          $type = "selectFormularItem";
           $values[] = array(
-            'text' => "Keine Auswahl",
-            'value' => ""
+            'text' => isset($properties['placeholder']) 
+                        ? $properties['placeholder']
+                        : "$label auswählen...",
+            'value' => '',
+            'disabled' => !$column['nullable']
           );
-          if(!$value)$value='';
+        }else{
+          if($column['nullable']){
+            $values[] = array(
+              'text' => "Keine Auswahl",
+              'value' => ""
+            );
+            if(!$value)$value='';
+          }
         }
-        foreach($v as $val)
+        foreach($v as $val){
           $values[] = array(
             'text' => $val,
             'value' => $val
           );
+        }
       }
 
       switch($type){
@@ -202,10 +230,14 @@ class MysqlFormLoader implements FormLoader {
             "date" => "date",
             "boolean" => "checkbox"
           );
-          $item->set("type",isset($inputType[$fieldtype])?$inputType[$fieldtype]:"text");
+          if( $properties && isset($properties['type']) ){
+            $item->set("type",$properties['type']);
+          }else{
+            $item->set("type",isset($inputType[$fieldtype])?$inputType[$fieldtype]:"text");
+          }
           $item->set("name", $name);
           if( $properties && isset( $properties['placeholder'] ) )
-            $item->set("placeholder", $properties['placeholder']);
+            $item->set("placeholder",$properties['placeholder']);
           $item->setLabel( $label );
           $form->addItem( $item );
         } break;
@@ -228,6 +260,19 @@ class MysqlFormLoader implements FormLoader {
           $item->set("name", $name);
           $item->set("options", $values);
           $form->addItem($item);
+        } break;
+
+        case "textareaFormularItem": { // normal textfield
+          $item = $form->createItem("textareaFormularItem");
+          if(!$column['nullable'])
+            $item->set("required","required");
+          if($value)
+            $item->set("value", $value);
+          $item->set("name", $name);
+          if( $properties && isset( $properties['placeholder'] ) )
+            $item->set("placeholder",$properties['placeholder']);
+          $item->setLabel( $label );
+          $form->addItem( $item );
         } break;
 
       }
