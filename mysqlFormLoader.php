@@ -231,7 +231,7 @@ class MysqlFormLoader implements FormLoader {
             $item->set("value", $value);
           $inputType = array(
             "float" => "number",
-            "bouble" => "number",
+            "double" => "number",
             "int" => "number",
             "tinyint" => "number",
             "bigint" => "number",
